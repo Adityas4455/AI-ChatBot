@@ -5,7 +5,7 @@ let imagebtn=document.querySelector("#image")
 let image=document.querySelector("#image img")
 let imageinput=document.querySelector("#image input")
 
-const Api_Url="https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCI0Cpo0cEHF30bXe6cYqsgDB8v952mcII"
+const Api_Url="https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyB6anWnJ3dtDUoMIYfuXScYDWXTRhDriHQ"
 
 let user={
     message:null,
@@ -29,16 +29,23 @@ let text=aiChatBox.querySelector(".ai-chat-area")
             }]
         })
     }
-    try{
-        let response= await fetch(Api_Url,RequestOption)
-        let data=await response.json()
-       let apiResponse=data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g,"$1").trim()
-       text.innerHTML=apiResponse    
-    }
-    catch(error){
-        console.log(error);
-        
-    }
+    try {
+  let response = await fetch(Api_Url, RequestOption)
+  let data = await response.json()
+  console.log("API Raw Response:", data)  // ADD THIS LINE
+  if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+    let apiResponse = data.candidates[0].content.parts[0].text
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .trim()
+    text.innerHTML = apiResponse
+  } else {
+    text.innerHTML = "❌ No response or unexpected format from Gemini."
+  }
+} catch (error) {
+  console.error("Fetch error:", error)
+  text.innerHTML = "❌ Error fetching response. Check console."
+}  
+    
     finally{
         chatContainer.scrollTo({top:chatContainer.scrollHeight,behavior:"smooth"})
         image.src=`img.svg`
